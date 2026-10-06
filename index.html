@@ -11,86 +11,158 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>NAM English</title>
 <style>
-:root{color-scheme:light dark;--bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#d1d5db;--accent:#1d4ed8;--good:#15803d;--warn:#b45309}
-@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111827;--text:#f9fafb;--muted:#9ca3af;--line:#374151;--accent:#60a5fa;--good:#4ade80;--warn:#fbbf24}}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}header{position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 88%,transparent);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid var(--line)}.top{display:flex;align-items:center;justify-content:space-between;gap:10px}h1{font-size:20px;margin:0}.small{font-size:12px;color:var(--muted)}main{max-width:760px;margin:0 auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom))}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}select,button{width:100%;min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:10px 12px;font-size:15px}.progress{display:flex;justify-content:space-between;margin:10px 2px 14px;font-size:13px;color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;min-height:360px;padding:24px 20px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.06);cursor:pointer;user-select:none}.label{font-size:12px;color:var(--muted);margin-bottom:8px}.ja{font-size:25px;line-height:1.5;font-weight:700}.divider{height:1px;background:var(--line);margin:24px 0}.en{font-size:23px;line-height:1.5;font-weight:650}.hidden{display:none}.hint{margin-top:18px;font-size:13px;color:var(--muted);text-align:center}.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}.footer-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.learned{border-color:var(--good);color:var(--good)}.english-only .ja,.english-only .label-ja,.english-only .divider{display:none}.english-only .card{min-height:300px}.badge{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+:root { color-scheme: light dark; --bg:#f5f7fb; --card:#fff; --text:#111827; --muted:#6b7280; --line:#d1d5db; --accent:#1d4ed8; --good:#15803d; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0b1220; --card:#111827; --text:#f9fafb; --muted:#9ca3af; --line:#374151; --accent:#60a5fa; --good:#4ade80; } }
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid var(--line)}
+main{max-width:760px;margin:auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom))}
+h1{font-size:20px;margin:0} .small{font-size:12px;color:var(--muted)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.viewmode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+select,button{min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:10px 12px;font-size:15px}
+.viewmode button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.progress{display:flex;justify-content:space-between;margin:10px 2px 14px;font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;min-height:360px;padding:24px 20px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.06);cursor:pointer}
+.label{font-size:12px;color:var(--muted);margin-bottom:8px} .ja{font-size:25px;line-height:1.5;font-weight:700} .en{font-size:23px;line-height:1.5;font-weight:650}
+.divider{height:1px;background:var(--line);margin:24px 0} .hidden{display:none!important} .hint{margin-top:18px;font-size:13px;color:var(--muted);text-align:center}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.speak{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+.learned{color:var(--good);border-color:var(--good)}
 </style>
 </head>
 <body>
-<header><div class="top"><div><h1>NAM English</h1><div class="small">Washington, DC · Oct 2026</div></div><span id="status" class="badge">Offline ready</span></div></header>
+<header>
+  <h1>NAM English</h1>
+  <div class="small">Washington, DC · Oct 2026</div>
+</header>
 <main>
-<div class="controls"><select id="category"><option value="ALL">All categories</option></select><select id="mode"><option value="all">All cards</option><option value="unlearned">Unlearned only</option><option value="learned">Learned only</option></select></div>
-<div class="progress"><span id="counter"></span><span id="learnedCount"></span></div>
-<div id="card" class="card"><div class="label label-ja">日本語</div><div id="ja" class="ja"></div><div id="divider" class="divider hidden"></div><div id="enWrap" class="hidden"><div class="label">English</div><div id="en" class="en"></div></div><div id="tapHint" class="hint">Tap to reveal English</div></div>
-<div class="actions"><button id="prev">← Previous</button><button id="learn">✓ Learned</button><button id="next">Next →</button></div>
-<div class="footer-actions"><button id="shuffle">Shuffle</button><button id="englishOnly">English only</button></div>
-<div class="footer-actions"><button id="speak">🔊 Speak English</button><button id="reset">Reset progress</button></div>
+  <div class="controls">
+    <select id="category">
+      <option value="ALL">All categories</option>
+      <option value="Business / implementation">Business / implementation</option><option value="Collaboration">Collaboration</option><option value="Communication help">Communication help</option><option value="Networking">Networking</option><option value="Poster explanation">Poster explanation</option><option value="U.S. needs">U.S. needs</option>
+    </select>
+    <select id="filter">
+      <option value="all">All cards</option>
+      <option value="unlearned">Unlearned only</option>
+      <option value="learned">Learned only</option>
+    </select>
+  </div>
+
+  <div class="viewmode">
+    <button id="studyMode" class="active">学習：日本語 → 英語</button>
+    <button id="englishMode">英語だけ表示</button>
+  </div>
+
+  <div class="progress"><span id="counter"></span><span id="learnedCount"></span></div>
+
+  <div id="card" class="card">
+    <div id="jaLabel" class="label">日本語</div>
+    <div id="ja" class="ja"></div>
+    <div id="divider" class="divider hidden"></div>
+    <div id="enWrap" class="hidden">
+      <div class="label">English</div>
+      <div id="en" class="en"></div>
+    </div>
+    <div id="hint" class="hint">カードをタップすると英語を表示</div>
+  </div>
+
+  <div class="row">
+    <button id="speak" class="speak">🔊 英語を再生</button>
+    <button id="shuffle">🔀 シャッフル</button>
+  </div>
+  <div class="actions">
+    <button id="prev">← 前へ</button>
+    <button id="learn">✓ 覚えた</button>
+    <button id="next">次へ →</button>
+  </div>
+  <div class="row">
+    <button id="testVoice">音声テスト</button>
+    <button id="reset">学習状況をリセット</button>
+  </div>
 </main>
+
 <script>
-const PHRASES = [
-["Poster explanation","私たちは、2〜5分でできる音声による認知機能セルフチェックを開発しています。","We are developing a voice-based cognitive self-check that takes about two to five minutes."],
-["Poster explanation","専門の検査者や専用機器を必要としません。","It does not require a specialist administrator or dedicated hardware."],
-["Poster explanation","利用者は音声の質問を聞き、声で答えます。","Users listen to voice-guided questions and answer by voice."],
-["Poster explanation","私たちは回答内容と音響特徴の両方を解析します。","We analyze both response accuracy and acoustic speech features."],
-["Poster explanation","研究モデルは独立した外部コホートで検証しました。","We validated the research model in an independent external cohort."],
-["Poster explanation","認知正常とMCIまたは認知症の識別で、AUC 0.936を得ました。","We achieved an AUC of 0.936 for distinguishing cognitively normal participants from those with MCI or dementia."],
-["Poster explanation","認知正常とMCIの識別では、AUC 0.900でした。","For distinguishing cognitively normal participants from those with MCI, the AUC was 0.900."],
-["Poster explanation","この精度は研究モデルの結果であり、ONSEI Proの性能表示ではありません。","These accuracy results belong to the research model and are not performance claims for ONSEI Pro."],
-["Poster explanation","ONSEI Proは日本では非医療機器のセルフチェック製品として設計されています。","In Japan, ONSEI Pro is designed as a non-medical-device self-check product."],
-["Poster explanation","私たちの目標は、認知機能のセルフチェックを日常的な習慣にすることです。","Our goal is to make cognitive self-checking a normal part of everyday life."],
-["U.S. needs","米国では、このような短時間の音声セルフチェックにニーズがあると思いますか？","Do you think there is a need for this kind of short voice-based cognitive self-check in the U.S.?"],
-["U.S. needs","このようなツールは、米国のどこで最も役立つと思いますか？","Where do you think this kind of tool could be most useful in the U.S.?"],
-["U.S. needs","米国では主な利用者や顧客は誰になると思いますか？","Who do you think would be the main users or customers in the U.S.?"],
-["U.S. needs","医療、地域保健、企業、消費者向けのうち、どこに最も可能性があると思いますか？","Do you see more potential in healthcare, community health, employers, or consumer wellness?"],
-["U.S. needs","米国で導入する際の最大の障壁は何だと思いますか？","What do you think would be the biggest barrier to adoption in the U.S.?"],
-["U.S. needs","人々はこのようなセルフチェックを繰り返し使うと思いますか？","Do you think people would use this kind of self-check repeatedly?"],
-["U.S. needs","この分野で、まだ満たされていないニーズは何でしょうか？","What unmet needs do you see in this area?"],
-["U.S. needs","米国で説得力を持つためには、どのようなエビデンスが必要でしょうか？","What kind of evidence would be convincing in the U.S.?"],
-["U.S. needs","このサービスにお金を払う主体は誰になると思いますか？","Who do you think would be the payer for this kind of service?"],
-["U.S. needs","B2Bと一般消費者向けでは、どちらが現実的だと思いますか？","Do you think a B2B model or a direct-to-consumer model would be more realistic?"],
-["Collaboration","私たちは国際的な外部検証のパートナーを探しています。","We are looking for partners for international external validation."],
-["Collaboration","共同研究や共同開発にも関心があります。","We are also interested in joint research and joint development."],
-["Collaboration","英語圏の集団でこの方法を検証することに関心はありますか？","Would your group be interested in validating this approach in an English-speaking population?"],
-["Collaboration","共同検証研究について話し合うことにご関心はありますか？","Would you be interested in discussing a joint validation study?"],
-["Collaboration","米国で行うなら、どのような研究デザインが適切だと思いますか？","What study design do you think would be appropriate in the U.S.?"],
-["Collaboration","英語化には翻訳だけで十分でしょうか、それとも課題自体を変える必要があるでしょうか？","For English localization, do you think translation would be enough, or would the tasks themselves need to change?"],
-["Collaboration","このテーマに関心を持ちそうな研究者や組織をご存じですか？","Do you know any researchers or organizations that might be interested in this topic?"],
-["Collaboration","可能であれば、ご紹介いただけると大変ありがたいです。","If possible, I would greatly appreciate an introduction."],
-["Collaboration","サミット後もこの議論を続けたいと思っています。","I would like to continue this discussion after the Summit."],
-["Collaboration","帰国後に改めてご連絡してもよろしいでしょうか？","Would it be okay if I contact you after I return to Japan?"],
-["Collaboration","連絡先を交換してもよろしいでしょうか？","May I have your contact information so we can stay in touch?"],
-["Business / implementation","日本では自治体、健診、企業向けなど複数の導入経路を検討しています。","In Japan, we are exploring several deployment channels, including municipalities, health check-up programs, and B2B use."],
-["Business / implementation","共通APIを通じて既存サービスに組み込むこともできます。","The capability can also be integrated into existing services through a common API."],
-["Business / implementation","米国では、どの導入経路が最も現実的だと思いますか？","Which deployment pathway do you think would be most realistic in the U.S.?"],
-["Business / implementation","医療システムへのAPI提供に可能性はあると思いますか？","Do you think there is potential for API integration with healthcare systems?"],
-["Business / implementation","現時点では、米国での具体的な契約や投資判断をする権限はありません。","At this stage, I do not have authority to make a concrete commitment on a U.S. contract or investment."],
-["Business / implementation","具体的な協業については、帰国後に社内で検討する必要があります。","Any concrete collaboration would need to be discussed internally after I return to Japan."],
-["Business / implementation","今日は情報交換と関係づくりを主な目的にしています。","My main purpose today is to exchange information and build relationships."],
-["Business / implementation","今日は約束はできませんが、ぜひ議論を続けたいと思っています。","I cannot make any commitment today, but I would be very interested in continuing the discussion."],
-["Networking","はじめまして。日本から来た木之下節夫です。","Nice to meet you. I'm Setsuo Kinoshita from Japan."],
-["Networking","日本テクトシステムズで認知機能の音声AI研究を担当しています。","I work on voice-AI research for cognitive health at Nippontect Systems."],
-["Networking","私たちのポスターをご覧になりましたか？","Have you had a chance to see our poster?"],
-["Networking","ご専門について少し教えていただけますか？","Could you tell me a little about your work?"],
-["Networking","この研究について、どの点が一番興味深いと感じましたか？","What aspect of this work did you find most interesting?"],
-["Networking","ご意見を伺えてとても参考になりました。","Your comments were very helpful. Thank you."],
-["Networking","名刺をお渡ししてもよろしいですか？","May I give you my business card?"],
-["Networking","お話しできてよかったです。","It was a pleasure speaking with you."],
-["Communication help","もう少しゆっくり話していただけますか？","Could you please speak a little more slowly?"],
-["Communication help","もう一度、もう少し簡単な言葉で言っていただけますか？","Could you say that again in simpler words?"],
-["Communication help","すみません、最後の部分が聞き取れませんでした。","I'm sorry, I didn't catch the last part."],
-["Communication help","Google翻訳を使ってもよろしいでしょうか？","Would you mind if I use Google Translate?"],
-["Communication help","英語があまり得意ではないので、時々Google翻訳を使うかもしれません。","My English is not very strong, so I may use Google Translate sometimes."],
-["Communication help","少々お待ちください。翻訳します。","One moment, please. I'd like to translate that."],
-["Communication help","こちらのスマートフォンに入力していただけますか？","Could you type that into my phone?"],
-["Communication help","つまり、〜という意味でしょうか？","Do you mean that ...?"],
-["Communication help","理解できたか確認させてください。","Let me make sure I understood you correctly."],
-["Communication help","メールで詳しくお送りいただけますか？","Could you send me the details by email?"]
-].map((x,i)=>({cat:x[0],ja:x[1],en:x[2],id:i}));
-const learnedKey="namEnglishLearnedV1";let learned=new Set(JSON.parse(localStorage.getItem(learnedKey)||"[]")),filtered=[],index=0,revealed=false,englishOnly=false;const $=id=>document.getElementById(id);
-[...new Set(PHRASES.map(p=>p.cat))].forEach(c=>{$("category").add(new Option(c,c))});
-function save(){localStorage.setItem(learnedKey,JSON.stringify([...learned]))}
-function applyFilter(keep=true){const cat=$("category").value,mode=$("mode").value,current=filtered[index]?.id;filtered=PHRASES.filter(p=>(cat==="ALL"||p.cat===cat)&&(mode==="all"||(mode==="learned"?learned.has(p.id):!learned.has(p.id))));if(!filtered.length){$("ja").textContent="該当するカードがありません";$("en").textContent="No cards match this filter.";$("counter").textContent="0 / 0";return}if(keep&&current!=null){const ni=filtered.findIndex(p=>p.id===current);index=ni>=0?ni:0}else index=0;render()}
-function render(){if(!filtered.length)return;const p=filtered[index];$("ja").textContent=p.ja;$("en").textContent=p.en;$("counter").textContent=`${index+1} / ${filtered.length} · ${p.cat}`;$("learnedCount").textContent=`${learned.size} / ${PHRASES.length} learned`;$("learn").textContent=learned.has(p.id)?"↩ Unlearn":"✓ Learned";$("learn").className=learned.has(p.id)?"learned":"";document.body.classList.toggle("english-only",englishOnly);if(englishOnly)revealed=true;$("enWrap").classList.toggle("hidden",!revealed);$("divider").classList.toggle("hidden",!revealed);$("tapHint").textContent=revealed?"Tap to hide English":"Tap to reveal English"}
-$("card").onclick=()=>{if(!englishOnly){revealed=!revealed;render()}};$("next").onclick=()=>{if(filtered.length){index=(index+1)%filtered.length;revealed=englishOnly;render()}};$("prev").onclick=()=>{if(filtered.length){index=(index-1+filtered.length)%filtered.length;revealed=englishOnly;render()}};$("learn").onclick=()=>{if(!filtered.length)return;const id=filtered[index].id;learned.has(id)?learned.delete(id):learned.add(id);save();applyFilter()};$("shuffle").onclick=()=>{for(let i=filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[filtered[i],filtered[j]]=[filtered[j],filtered[i]]}index=0;revealed=englishOnly;render()};$("englishOnly").onclick=()=>{englishOnly=!englishOnly;$("englishOnly").textContent=englishOnly?"Japanese + English":"English only";revealed=englishOnly;render()};$("speak").onclick=()=>{if(filtered.length&&"speechSynthesis" in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(filtered[index].en);u.lang="en-US";u.rate=.88;speechSynthesis.speak(u)}};$("reset").onclick=()=>{if(confirm("学習状況をすべてリセットしますか？")){learned.clear();save();applyFilter(false)}};$("category").onchange=()=>applyFilter(false);$("mode").onchange=()=>applyFilter(false);window.addEventListener("online",()=>$("status").textContent="Online");window.addEventListener("offline",()=>$("status").textContent="Offline ready");if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(console.error);applyFilter(false);
+const PHRASES = [{"cat": "Poster explanation", "ja": "私たちは、2〜5分でできる音声による認知機能セルフチェックを開発しています。", "en": "We are developing a voice-based cognitive self-check that takes about two to five minutes."}, {"cat": "Poster explanation", "ja": "専門の検査者や専用機器を必要としません。", "en": "It does not require a specialist administrator or dedicated hardware."}, {"cat": "Poster explanation", "ja": "利用者は音声の質問を聞き、声で答えます。", "en": "Users listen to voice-guided questions and answer by voice."}, {"cat": "Poster explanation", "ja": "私たちは回答内容と音響特徴の両方を解析します。", "en": "We analyze both response accuracy and acoustic speech features."}, {"cat": "Poster explanation", "ja": "研究モデルは独立した外部コホートで検証しました。", "en": "We validated the research model in an independent external cohort."}, {"cat": "Poster explanation", "ja": "認知正常とMCIまたは認知症の識別で、AUC 0.936を得ました。", "en": "We achieved an AUC of 0.936 for distinguishing cognitively normal participants from those with MCI or dementia."}, {"cat": "Poster explanation", "ja": "認知正常とMCIの識別では、AUC 0.900でした。", "en": "For distinguishing cognitively normal participants from those with MCI, the AUC was 0.900."}, {"cat": "Poster explanation", "ja": "この精度は研究モデルの結果であり、ONSEI Proの性能表示ではありません。", "en": "These accuracy results belong to the research model and are not performance claims for ONSEI Pro."}, {"cat": "Poster explanation", "ja": "ONSEI Proは日本では非医療機器のセルフチェック製品として設計されています。", "en": "In Japan, ONSEI Pro is designed as a non-medical-device self-check product."}, {"cat": "Poster explanation", "ja": "私たちの目標は、認知機能のセルフチェックを日常的な習慣にすることです。", "en": "Our goal is to make cognitive self-checking a normal part of everyday life."}, {"cat": "Poster explanation", "ja": "早く変化に気づくことで、行動や準備のための時間を増やしたいと考えています。", "en": "We want earlier awareness to give people more time to act and prepare."}, {"cat": "U.S. needs", "ja": "米国では、このような短時間の音声セルフチェックにニーズがあると思いますか？", "en": "Do you think there is a need for this kind of short voice-based cognitive self-check in the U.S.?"}, {"cat": "U.S. needs", "ja": "このようなツールは、米国のどこで最も役立つと思いますか？", "en": "Where do you think this kind of tool could be most useful in the U.S.?"}, {"cat": "U.S. needs", "ja": "米国では主な利用者や顧客は誰になると思いますか？", "en": "Who do you think would be the main users or customers in the U.S.?"}, {"cat": "U.S. needs", "ja": "医療、地域保健、企業、消費者向けのうち、どこに最も可能性があると思いますか？", "en": "Do you see more potential in healthcare, community health, employers, or consumer wellness?"}, {"cat": "U.S. needs", "ja": "米国で導入する際の最大の障壁は何だと思いますか？", "en": "What do you think would be the biggest barrier to adoption in the U.S.?"}, {"cat": "U.S. needs", "ja": "人々はこのようなセルフチェックを繰り返し使うと思いますか？", "en": "Do you think people would use this kind of self-check repeatedly?"}, {"cat": "U.S. needs", "ja": "この分野で、まだ満たされていないニーズは何でしょうか？", "en": "What unmet needs do you see in this area?"}, {"cat": "U.S. needs", "ja": "米国で説得力を持つためには、どのようなエビデンスが必要でしょうか？", "en": "What kind of evidence would be convincing in the U.S.?"}, {"cat": "U.S. needs", "ja": "このサービスにお金を払う主体は誰になると思いますか？", "en": "Who do you think would be the payer for this kind of service?"}, {"cat": "U.S. needs", "ja": "B2Bと一般消費者向けでは、どちらが現実的だと思いますか？", "en": "Do you think a B2B model or a direct-to-consumer model would be more realistic?"}, {"cat": "Collaboration", "ja": "私たちは国際的な外部検証のパートナーを探しています。", "en": "We are looking for partners for international external validation."}, {"cat": "Collaboration", "ja": "共同研究や共同開発にも関心があります。", "en": "We are also interested in joint research and joint development."}, {"cat": "Collaboration", "ja": "英語圏の集団でこの方法を検証することに関心はありますか？", "en": "Would your group be interested in validating this approach in an English-speaking population?"}, {"cat": "Collaboration", "ja": "共同検証研究について話し合うことにご関心はありますか？", "en": "Would you be interested in discussing a joint validation study?"}, {"cat": "Collaboration", "ja": "米国で行うなら、どのような研究デザインが適切だと思いますか？", "en": "What study design do you think would be appropriate in the U.S.?"}, {"cat": "Collaboration", "ja": "英語化には翻訳だけで十分でしょうか、それとも課題自体を変える必要があるでしょうか？", "en": "For English localization, do you think translation would be enough, or would the tasks themselves need to change?"}, {"cat": "Collaboration", "ja": "このテーマに関心を持ちそうな研究者や組織をご存じですか？", "en": "Do you know any researchers or organizations that might be interested in this topic?"}, {"cat": "Collaboration", "ja": "可能であれば、ご紹介いただけると大変ありがたいです。", "en": "If possible, I would greatly appreciate an introduction."}, {"cat": "Collaboration", "ja": "サミット後もこの議論を続けたいと思っています。", "en": "I would like to continue this discussion after the Summit."}, {"cat": "Collaboration", "ja": "帰国後に改めてご連絡してもよろしいでしょうか？", "en": "Would it be okay if I contact you after I return to Japan?"}, {"cat": "Collaboration", "ja": "連絡先を交換してもよろしいでしょうか？", "en": "May I have your contact information so we can stay in touch?"}, {"cat": "Business / implementation", "ja": "日本では自治体、健診、企業向けなど複数の導入経路を検討しています。", "en": "In Japan, we are exploring several deployment channels, including municipalities, health check-up programs, and B2B use."}, {"cat": "Business / implementation", "ja": "共通APIを通じて既存サービスに組み込むこともできます。", "en": "The capability can also be integrated into existing services through a common API."}, {"cat": "Business / implementation", "ja": "米国では、どの導入経路が最も現実的だと思いますか？", "en": "Which deployment pathway do you think would be most realistic in the U.S.?"}, {"cat": "Business / implementation", "ja": "医療システムへのAPI提供に可能性はあると思いますか？", "en": "Do you think there is potential for API integration with healthcare systems?"}, {"cat": "Business / implementation", "ja": "現時点では、米国での具体的な契約や投資判断をする権限はありません。", "en": "At this stage, I do not have authority to make a concrete commitment on a U.S. contract or investment."}, {"cat": "Business / implementation", "ja": "具体的な協業については、帰国後に社内で検討する必要があります。", "en": "Any concrete collaboration would need to be discussed internally after I return to Japan."}, {"cat": "Business / implementation", "ja": "今日は情報交換と関係づくりを主な目的にしています。", "en": "My main purpose today is to exchange information and build relationships."}, {"cat": "Business / implementation", "ja": "今日は約束はできませんが、ぜひ議論を続けたいと思っています。", "en": "I cannot make any commitment today, but I would be very interested in continuing the discussion."}, {"cat": "Networking", "ja": "はじめまして。日本から来た木之下節夫です。", "en": "Nice to meet you. I'm Setsuo Kinoshita from Japan."}, {"cat": "Networking", "ja": "日本テクトシステムズで認知機能の音声AI研究を担当しています。", "en": "I work on voice-AI research for cognitive health at Nippontect Systems."}, {"cat": "Networking", "ja": "私たちのポスターをご覧になりましたか？", "en": "Have you had a chance to see our poster?"}, {"cat": "Networking", "ja": "ご専門について少し教えていただけますか？", "en": "Could you tell me a little about your work?"}, {"cat": "Networking", "ja": "この研究について、どの点が一番興味深いと感じましたか？", "en": "What aspect of this work did you find most interesting?"}, {"cat": "Networking", "ja": "ご意見を伺えてとても参考になりました。", "en": "Your comments were very helpful. Thank you."}, {"cat": "Networking", "ja": "名刺をお渡ししてもよろしいですか？", "en": "May I give you my business card?"}, {"cat": "Networking", "ja": "お話しできてよかったです。", "en": "It was a pleasure speaking with you."}, {"cat": "Communication help", "ja": "もう少しゆっくり話していただけますか？", "en": "Could you please speak a little more slowly?"}, {"cat": "Communication help", "ja": "もう一度、もう少し簡単な言葉で言っていただけますか？", "en": "Could you say that again in simpler words?"}, {"cat": "Communication help", "ja": "すみません、最後の部分が聞き取れませんでした。", "en": "I'm sorry, I didn't catch the last part."}, {"cat": "Communication help", "ja": "Google翻訳を使ってもよろしいでしょうか？", "en": "Would you mind if I use Google Translate?"}, {"cat": "Communication help", "ja": "英語があまり得意ではないので、時々Google翻訳を使うかもしれません。", "en": "My English is not very strong, so I may use Google Translate sometimes."}, {"cat": "Communication help", "ja": "少々お待ちください。翻訳します。", "en": "One moment, please. I'd like to translate that."}, {"cat": "Communication help", "ja": "こちらのスマートフォンに入力していただけますか？", "en": "Could you type that into my phone?"}, {"cat": "Communication help", "ja": "つまり、〜という意味でしょうか？", "en": "Do you mean that ...?"}, {"cat": "Communication help", "ja": "理解できたか確認させてください。", "en": "Let me make sure I understood you correctly."}, {"cat": "Communication help", "ja": "メールで詳しくお送りいただけますか？", "en": "Could you send me the details by email?"}];
+let learned = new Set(JSON.parse(localStorage.getItem("namEnglishLearnedV2") || "[]"));
+let filtered=[], index=0, revealed=false, mode="study";
+const $=id=>document.getElementById(id);
+
+function save(){localStorage.setItem("namEnglishLearnedV2",JSON.stringify([...learned]));}
+function refreshFilter(reset=false){
+ const cat=$("category").value, f=$("filter").value;
+ filtered=PHRASES.map((p,i)=>({...p,id:i})).filter(p =>
+   (cat==="ALL"||p.cat===cat) &&
+   (f==="all" || (f==="learned" ? learned.has(p.id) : !learned.has(p.id)))
+ );
+ if(reset) index=0;
+ if(index>=filtered.length) index=0;
+ render();
+}
+function render(){
+ if(!filtered.length){
+   $("ja").textContent="該当するカードがありません"; $("en").textContent="";
+   $("counter").textContent="0 / 0"; return;
+ }
+ const p=filtered[index];
+ $("ja").textContent=p.ja; $("en").textContent=p.en;
+ $("counter").textContent=`${index+1} / ${filtered.length} · ${p.cat}`;
+ $("learnedCount").textContent=`${learned.size} / ${PHRASES.length} learned`;
+ $("learn").textContent=learned.has(p.id) ? "↩ 未習得に戻す" : "✓ 覚えた";
+ $("learn").className=learned.has(p.id) ? "learned" : "";
+
+ const englishOnly = mode==="english";
+ $("jaLabel").classList.toggle("hidden",englishOnly);
+ $("ja").classList.toggle("hidden",englishOnly);
+ $("divider").classList.toggle("hidden", !(revealed || englishOnly));
+ $("enWrap").classList.toggle("hidden", !(revealed || englishOnly));
+ $("hint").classList.toggle("hidden",englishOnly);
+ $("hint").textContent=revealed ? "カードをタップすると英語を隠す" : "カードをタップすると英語を表示";
+ $("studyMode").classList.toggle("active",mode==="study");
+ $("englishMode").classList.toggle("active",mode==="english");
+}
+$("card").onclick=()=>{ if(mode==="study"){revealed=!revealed; render();} };
+$("studyMode").onclick=()=>{mode="study";revealed=false;render();};
+$("englishMode").onclick=()=>{mode="english";revealed=true;render();};
+$("next").onclick=()=>{if(filtered.length){index=(index+1)%filtered.length; revealed=(mode==="english"); render();}};
+$("prev").onclick=()=>{if(filtered.length){index=(index-1+filtered.length)%filtered.length; revealed=(mode==="english"); render();}};
+$("learn").onclick=()=>{if(!filtered.length)return; const id=filtered[index].id; learned.has(id)?learned.delete(id):learned.add(id);save();refreshFilter(false);};
+$("shuffle").onclick=()=>{filtered.sort(()=>Math.random()-.5);index=0;revealed=(mode==="english");render();};
+$("category").onchange=()=>refreshFilter(true);
+$("filter").onchange=()=>refreshFilter(true);
+$("reset").onclick=()=>{if(confirm("学習状況をすべてリセットしますか？")){learned.clear();save();refreshFilter(true);}};
+
+function chooseEnglishVoice(){
+  const voices=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  return voices.find(v=>v.lang==="en-US" && /Samantha|Ava|Allison|Susan|Tom|Alex/i.test(v.name))
+      || voices.find(v=>v.lang==="en-US")
+      || voices.find(v=>v.lang && v.lang.startsWith("en"))
+      || null;
+}
+function speakText(text){
+  if(!("speechSynthesis" in window)){
+    alert("この端末では音声読み上げを利用できません。");
+    return;
+  }
+  try {
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="en-US"; u.rate=0.82; u.pitch=1.0; u.volume=1.0;
+    const v=chooseEnglishVoice(); if(v) u.voice=v;
+    u.onerror=(e)=>{console.log("speech error",e); alert("音声再生に失敗しました。Safariで開いて再度お試しください。");};
+    speechSynthesis.speak(u);
+  } catch(e) {
+    alert("音声再生に失敗しました。Safariで開いて再度お試しください。");
+  }
+}
+$("speak").onclick=()=>{if(filtered.length)speakText(filtered[index].en);};
+$("testVoice").onclick=()=>speakText("Hello. This is the English voice test.");
+
+if("speechSynthesis" in window){
+  speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");
+refreshFilter(true);
 </script>
 </body></html>
