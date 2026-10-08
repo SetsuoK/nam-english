@@ -1,4 +1,4 @@
-const CACHE='nam-english-v5';
+const CACHE='nam-english-v5.1';
 const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',event=>{

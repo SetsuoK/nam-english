@@ -20,7 +20,7 @@ select,button{min-height:46px;border:1px solid var(--line);border-radius:12px;ba
 .actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px} .speak{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700} .learned{color:var(--good);border-color:var(--good)}
 .status{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px} .status.warn{color:var(--warn)}
 </style></head><body>
-<header><h1>NAM English</h1><div class="small">Washington, DC · Oct 2026 · v5</div></header><main>
+<header><h1>NAM English</h1><div class="small">Washington, DC · Oct 2026 · v5.1</div></header><main>
 <div class="scope"><button id="coreScope" class="active">Core 30</button><button id="allScope">All 62</button></div>
 <div class="controls"><select id="category"><option value="ALL">All categories</option><option>Key scripts</option><option>Poster explanation</option><option>U.S. needs</option><option>Collaboration</option><option>Business / implementation</option><option>Networking</option><option>Communication help</option></select>
 <select id="filter"><option value="all">All cards</option><option value="unlearned">Unlearned only</option><option value="learned">Learned only</option></select></div>
@@ -58,16 +58,15 @@ $('coreScope').onclick=()=>{scope='core';refreshFilter(true);};$('allScope').onc
 $('learn').onclick=()=>{if(!filtered.length)return;const id=filtered[index].id;learned.has(id)?learned.delete(id):learned.add(id);save();refreshFilter(false);};$('shuffle').onclick=()=>{filtered.sort(()=>Math.random()-.5);index=0;revealed=(mode==='english');render();};$('category').onchange=()=>refreshFilter(true);$('filter').onchange=()=>refreshFilter(true);$('reset').onclick=()=>{if(confirm('学習状況をすべてリセットしますか？')){learned.clear();save();refreshFilter(true);}};
 
 
-let englishVoices=[];
-let voiceQueue=[];
-let speaking=false;
 
-function voiceQualityScore(v){
+let englishVoices=[];
+
+function scoreVoice(v){
   const n=(v.name||'').toLowerCase();
   const l=(v.lang||'').toLowerCase();
   let s=0;
   if(l==='en-us') s+=30;
-  else if(l.startsWith('en')) s+=15;
+  else if(l.startsWith('en')) s+=10;
   if(v.localService) s+=10;
   if(/premium/.test(n)) s+=100;
   if(/enhanced/.test(n)) s+=90;
@@ -76,7 +75,6 @@ function voiceQualityScore(v){
   if(/samantha/.test(n)) s+=45;
   if(/allison/.test(n)) s+=35;
   if(/alex/.test(n)) s+=30;
-  if(/tom/.test(n)) s+=20;
   return s;
 }
 
@@ -84,114 +82,95 @@ function loadVoices(){
   if(!('speechSynthesis' in window)) return;
   englishVoices=speechSynthesis.getVoices()
     .filter(v=>/^en/i.test(v.lang))
-    .sort((a,b)=>voiceQualityScore(b)-voiceQualityScore(a));
+    .sort((a,b)=>scoreVoice(b)-scoreVoice(a));
 
   const sel=$('voiceSelect');
-  const savedName=localStorage.getItem('namEnglishVoiceName')||'';
-  sel.innerHTML='<option value="">自動選択（高品質優先）</option>';
-
+  const saved=localStorage.getItem('namEnglishVoiceName')||'';
+  sel.innerHTML='<option value="">自動選択</option>';
   englishVoices.forEach((v,i)=>{
     const o=document.createElement('option');
     o.value=String(i);
-    const q=voiceQualityScore(v)>=80?' ★高品質候補':'';
-    o.textContent=`${v.name} (${v.lang})${q}`;
+    o.textContent=`${v.name} (${v.lang})${scoreVoice(v)>=80?' ★':''}`;
     sel.appendChild(o);
   });
-
-  if(savedName){
-    const idx=englishVoices.findIndex(v=>v.name===savedName);
+  if(saved){
+    const idx=englishVoices.findIndex(v=>v.name===saved);
     if(idx>=0) sel.value=String(idx);
   }
-  updateVoiceStatus();
 }
 
-function chosenVoice(){
+function getVoice(){
   const sel=$('voiceSelect');
-  if(sel && sel.value!=='' && englishVoices[Number(sel.value)]) {
-    return englishVoices[Number(sel.value)];
-  }
+  if(sel && sel.value!=='' && englishVoices[Number(sel.value)]) return englishVoices[Number(sel.value)];
   return englishVoices[0] || null;
 }
 
-function updateVoiceStatus(){
-  const v=chosenVoice();
-  const status=$('audioStatus');
-  if(!v){
-    status.textContent='英語音声が見つかりません。iPhoneの英語音声を追加してから「音声一覧を更新」を押してください。';
-    status.className='status warn';
-    return;
-  }
-  const quality=voiceQualityScore(v)>=80?'高品質候補':'標準音声';
-  status.textContent=`選択中: ${v.name} (${v.lang}) · ${quality}`;
-  status.className='status';
-}
-
-function splitForSpeech(text){
-  // Keep short cards as one utterance. Split long scripts at sentence boundaries
-  // because iOS prosody is noticeably more natural on shorter utterances.
-  if(text.length < 180) return [text];
-  const parts=text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
-  return parts.map(s=>s.trim()).filter(Boolean);
-}
-
-function stopSpeech(){
-  voiceQueue=[];
-  speaking=false;
-  if('speechSynthesis' in window) speechSynthesis.cancel();
-}
-
-function speakNext(){
-  if(!voiceQueue.length){
-    speaking=false;
-    return;
-  }
-  speaking=true;
-  const text=voiceQueue.shift();
-  const u=new SpeechSynthesisUtterance(text);
-  const v=chosenVoice();
-  if(v) u.voice=v;
-  u.lang=(v&&v.lang)||'en-US';
-  u.rate=Number(localStorage.getItem('namEnglishRate')||'0.92');
-  u.pitch=Number(localStorage.getItem('namEnglishPitch')||'1.0');
-  u.volume=1.0;
-  u.onend=()=>setTimeout(speakNext,120);
-  u.onerror=()=>{
-    speaking=false;
-    $('audioStatus').textContent='音声再生に失敗しました。別の英語音声を選択してください。';
+function speakIOS(text){
+  if(!('speechSynthesis' in window)){
+    $('audioStatus').textContent='このiPhoneではWeb音声再生を利用できません。';
     $('audioStatus').className='status warn';
-  };
-  speechSynthesis.speak(u);
-}
+    return;
+  }
 
-function speakNative(text){
-  if(!('speechSynthesis' in window)) return false;
-  try{
-    stopSpeech();
-    const v=chosenVoice();
-    $('audioStatus').textContent=v
-      ? `再生: ${v.name} (${v.lang})`
-      : 'iPhone標準英語音声で再生';
-    $('audioStatus').className='status';
-    voiceQueue=splitForSpeech(text);
-    speakNext();
-    return true;
-  }catch(e){
-    return false;
+  const synth=window.speechSynthesis;
+
+  const doSpeak=()=>{
+    const u=new SpeechSynthesisUtterance(text);
+    const v=getVoice();
+
+    if(v){
+      u.voice=v;
+      u.lang=v.lang;
+    }else{
+      u.lang='en-US';
+    }
+    u.rate=Number(localStorage.getItem('namEnglishRate')||'0.92');
+    u.pitch=Number(localStorage.getItem('namEnglishPitch')||'1.0');
+    u.volume=1.0;
+
+    u.onstart=()=>{
+      $('audioStatus').textContent=v?`再生中: ${v.name} (${v.lang})`:'再生中: iPhone標準英語音声';
+      $('audioStatus').className='status';
+    };
+    u.onend=()=>{
+      $('audioStatus').textContent='再生完了';
+      $('audioStatus').className='status';
+    };
+    u.onerror=(e)=>{
+      $('audioStatus').textContent=`音声再生エラー: ${e.error||'unknown'}`;
+      $('audioStatus').className='status warn';
+    };
+
+    synth.resume();
+    synth.speak(u);
+  };
+
+  if(synth.speaking || synth.pending){
+    synth.cancel();
+    setTimeout(doSpeak,120);
+  }else{
+    doSpeak();
   }
 }
 
-function playPhrase(p){
-  if(!speakNative(p.en)) alert('この端末では音声を再生できません。');
-}
+$('speak').onclick=()=>{
+  if(filtered.length) speakIOS(filtered[index].en);
+};
 
-$('speak').onclick=()=>{if(filtered.length)playPhrase(filtered[index]);};
-$('testVoice').onclick=()=>speakNative("Hello. I'm Setsuo Kinoshita from Japan. This is a voice test for NAM English.");
-$('refreshVoices').onclick=()=>{loadVoices();$('audioStatus').textContent=`英語音声 ${englishVoices.length} 件を検出しました`;};
+$('testVoice').onclick=()=>{
+  speakIOS("Hello. I'm Setsuo Kinoshita from Japan. This is a voice test for NAM English.");
+};
+
+$('refreshVoices').onclick=()=>{
+  loadVoices();
+  $('audioStatus').textContent=`英語音声 ${englishVoices.length} 件を検出しました`;
+  $('audioStatus').className='status';
+};
+
 $('voiceSelect').onchange=()=>{
-  const v=chosenVoice();
+  const v=getVoice();
   if(v) localStorage.setItem('namEnglishVoiceName',v.name);
-  updateVoiceStatus();
-  speakNative("This is the selected English voice.");
+  speakIOS("This is the selected English voice.");
 };
 
 if($('rate')){
@@ -214,8 +193,8 @@ if($('pitch')){
 if('speechSynthesis' in window){
   loadVoices();
   speechSynthesis.onvoiceschanged=loadVoices;
-  setTimeout(loadVoices,300);
-  setTimeout(loadVoices,1200);
+  setTimeout(loadVoices,500);
+  setTimeout(loadVoices,1500);
 }
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js');refreshFilter(true);
 </script></body></html>
