@@ -1,6 +1,31 @@
-const CACHE="nam-english-v4.1";
-const CORE=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png"];
-const AUDIO=["./audio/001.mp3","./audio/002.mp3","./audio/003.mp3","./audio/004.mp3","./audio/005.mp3","./audio/006.mp3","./audio/007.mp3","./audio/008.mp3","./audio/009.mp3","./audio/010.mp3","./audio/011.mp3","./audio/012.mp3","./audio/013.mp3","./audio/014.mp3","./audio/015.mp3","./audio/016.mp3","./audio/017.mp3","./audio/018.mp3","./audio/019.mp3","./audio/020.mp3","./audio/021.mp3","./audio/022.mp3","./audio/023.mp3","./audio/024.mp3","./audio/025.mp3","./audio/026.mp3","./audio/027.mp3","./audio/028.mp3","./audio/029.mp3","./audio/030.mp3","./audio/031.mp3","./audio/032.mp3","./audio/033.mp3","./audio/034.mp3","./audio/035.mp3","./audio/036.mp3","./audio/037.mp3","./audio/038.mp3","./audio/039.mp3","./audio/040.mp3","./audio/041.mp3","./audio/042.mp3","./audio/043.mp3","./audio/044.mp3","./audio/045.mp3","./audio/046.mp3","./audio/047.mp3","./audio/048.mp3","./audio/049.mp3","./audio/050.mp3","./audio/051.mp3","./audio/052.mp3","./audio/053.mp3","./audio/054.mp3","./audio/055.mp3","./audio/056.mp3","./audio/057.mp3","./audio/058.mp3",];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(async c=>{await c.addAll(CORE);for(const a of AUDIO){try{await c.add(a);}catch(err){console.log("audio cache skipped",a);}}}));self.skipWaiting();});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
-self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(resp=>{const copy=resp.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return resp;}).catch(()=>e.request.mode==='navigate'?caches.match('./index.html'):Response.error())));});
+const CACHE='nam-english-v5';
+const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
+
+self.addEventListener('install',event=>{
+  event.waitUntil(
+    caches.open(CACHE).then(cache =>
+      Promise.all(CORE.map(url => cache.add(url).catch(()=>null)))
+    )
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate',event=>{
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET') return;
+  event.respondWith(
+    fetch(event.request).then(response=>{
+      const copy=response.clone();
+      caches.open(CACHE).then(cache=>cache.put(event.request,copy)).catch(()=>{});
+      return response;
+    }).catch(()=>caches.match(event.request).then(cached=>cached || caches.match('./index.html')))
+  );
+});
